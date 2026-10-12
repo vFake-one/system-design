@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Today’s check-in{% endblock %}
+{% block body_class %}mode-elderly{% endblock %}
+{% block content %}
+<div class="elderly-home">
+  <h1 class="h2">Check-in for {{ profile.full_name }}</h1>
+  {% if schedule %}
+    <p>Window {{ schedule.window_start.strftime('%H:%M') }} – {{ schedule.window_end.strftime('%H:%M') }}.</p>
+  {% endif %}
+  {% if existing and existing.status in ['completed', 'completed_late'] %}
+    <div class="alert alert-info">A check-in was already received today. You may send an update.</div>
+  {% endif %}
+  <form method="post" class="card">
+    {{ form.hidden_tag() }}
+    <fieldset class="mb-3">
+      <legend class="h5">How are you feeling?</legend>
+      <div class="mood-grid">
+        {% for value, label in form.mood.choices %}
+          <div>
+            <input type="radio" name="mood" id="mood-{{ value }}" value="{{ value }}" {% if form.mood.data == value or (not form.mood.data and value=='good') %}checked{% endif %}>
+            <label for="mood-{{ value }}">{{ label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <div class="mb-3">
+      <label class="form-label" for="notes">Optional note</label>
+      {{ form.notes(class="form-control", id="notes", rows="3") }}
+    </div>
+    <button class="btn btn-teal text-white btn-xl" type="submit">Send today’s check-in</button>
+  </form>
+  <form method="post" action="{{ url_for('checkins.help_request', elderly_id=profile.id) }}" class="card">
+    {{ help_form.hidden_tag() }}
+    <h2 class="h5">Need help now?</h2>
+    <p>This notifies the assigned caregiver in the app. It does <strong>not</strong> call an ambulance.</p>
+    <div class="mb-3">
+      <label class="form-label" for="help-notes">What do you need? (optional)</label>
+      {{ help_form.notes(class="form-control", id="help-notes", rows="2") }}
+    </div>
+    <button class="btn btn-help btn-xl" type="submit">I need help now</button>
+  </form>
+</div>
+{% endblock %}

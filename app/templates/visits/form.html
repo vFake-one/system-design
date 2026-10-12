@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Record visit{% endblock %}
+{% block content %}
+<h1 class="h3">Record visit</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Household</label>{{ form.elderly_id(class="form-select") }}</div>
+  <div class="row">
+    <div class="col-md-4 mb-3"><label class="form-label">Type</label>{{ form.visit_type(class="form-select") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Date and time</label>{{ form.visited_at(class="form-control") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Duration (minutes)</label>{{ form.duration_minutes(class="form-control") }}</div>
+  </div>
+  <div class="mb-3"><label class="form-label">Observations</label>{{ form.observations(class="form-control", rows="4") }}</div>
+  <button class="btn btn-teal text-white">Save visit</button>
+</form>
+{% endblock %}

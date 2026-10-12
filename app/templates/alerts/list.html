@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% from "_macros.html" import priority_badge %}
+{% block title %}Alerts{% endblock %}
+{% block content %}
+<h1 class="h3">Alerts</h1>
+<p>
+  <a href="?status=open">Open</a> ·
+  <a href="?status=resolved">Resolved</a> ·
+  <a href="?status=false_alert">False alerts</a> ·
+  <a href="?status=all">All</a>
+</p>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>When</th><th>Person</th><th>Type</th><th>Priority</th><th>Status</th><th>Score</th><th></th></tr></thead>
+      <tbody>
+      {% for a in alerts %}
+        <tr>
+          <td>{{ a.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ a.elderly.full_name }}</td>
+          <td>{{ a.alert_type }}</td>
+          <td>{{ priority_badge(a.priority) }}</td>
+          <td>{{ a.status }}</td>
+          <td>{{ a.risk_score if a.risk_score is not none else '—' }}</td>
+          <td><a href="{{ url_for('alerts.detail', alert_id=a.id) }}">Review</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="7">No alerts in this view.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

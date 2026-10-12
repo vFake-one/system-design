@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge, priority_badge %}
+{% block title %}Administrator dashboard{% endblock %}
+{% block content %}
+<div class="synthetic-banner">{{ organisation_name }} is showing <strong>synthetic demonstration data</strong>. Names and events are fictitious.</div>
+<h1 class="h3 mb-3">Administrator dashboard</h1>
+<div class="stat-grid">
+  <div class="stat"><div class="n">{{ counts.total }}</div><div class="l">Registered people</div></div>
+  <div class="stat"><div class="n">{{ counts.completed_today }}</div><div class="l">Check-ins received today</div></div>
+  <div class="stat"><div class="n">{{ counts.overdue }}</div><div class="l">Overdue now</div></div>
+  <div class="stat"><div class="n">{{ counts.unacked }}</div><div class="l">Unacknowledged alerts</div></div>
+  <div class="stat"><div class="n">{{ counts.high }}</div><div class="l">High-priority open cases</div></div>
+  <div class="stat"><div class="n">{{ counts.unresolved }}</div><div class="l">Cases still open</div></div>
+</div>
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card">
+      <h2 class="h5">Household contact status</h2>
+      <p class="small text-muted">“Check-in received” means a form was submitted today — not a medical all-clear.</p>
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead><tr><th>Name</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+          {% for p, st in rows %}
+            <tr>
+              <td>{{ p.full_name }}</td>
+              <td>{{ status_badge(st) }}</td>
+              <td><a href="{{ url_for('elderly.profile', elderly_id=p.id) }}">Open</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card">
+      <h2 class="h5">Open alerts</h2>
+      {% for a in alerts %}
+        <p class="mb-2">
+          {{ priority_badge(a.priority) }}
+          <a href="{{ url_for('alerts.detail', alert_id=a.id) }}">{{ a.title }}</a>
+          <span class="text-muted small">· {{ a.status }}</span>
+        </p>
+      {% else %}
+        <p class="text-muted mb-0">No open alerts.</p>
+      {% endfor %}
+    </div>
+    <div class="card">
+      <h2 class="h5">Recent visits</h2>
+      {% for v in counts.recent_visits %}
+        <p class="mb-1">{{ v.visited_at.strftime('%Y-%m-%d') }} · {{ v.elderly.full_name }} · {{ v.visit_type }}</p>
+      {% else %}
+        <p class="text-muted mb-0">No visits recorded.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

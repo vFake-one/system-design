@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Link family{% endblock %}
+{% block content %}
+<h1 class="h3">Link family — {{ profile.full_name }}</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Family account</label>{{ form.family_user_id(class="form-select") }}</div>
+  <div class="mb-3"><label class="form-label">Relationship</label>{{ form.relationship(class="form-control") }}</div>
+  <button class="btn btn-teal text-white">Link and activate</button>
+  <a class="btn btn-link" href="{{ url_for('elderly.profile', elderly_id=profile.id) }}">Back</a>
+</form>
+{% endblock %}

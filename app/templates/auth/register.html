@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Request account{% endblock %}
+{% block content %}
+<div class="card" style="max-width:520px;margin:1rem auto;">
+  <h1 class="h3">Request a family account</h1>
+  <p>New accounts stay <strong>inactive</strong> until an administrator activates them and links them to a household.</p>
+  <form method="post" novalidate>
+    {{ form.hidden_tag() }}
+    {% for field in [form.full_name, form.username, form.email, form.phone, form.password, form.confirm] %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id }}">{{ field.label.text }}</label>
+        {{ field(class="form-control") }}
+        {% for e in field.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <button class="btn btn-teal text-white" type="submit">Submit request</button>
+    <a class="btn btn-link" href="{{ url_for('auth.login') }}">Back to sign in</a>
+  </form>
+</div>
+{% endblock %}

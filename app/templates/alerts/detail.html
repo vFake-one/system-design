@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% from "_macros.html" import priority_badge %}
+{% block title %}Alert{% endblock %}
+{% block content %}
+<h1 class="h3">{{ alert.title }}</h1>
+<p>{{ priority_badge(alert.priority) }}
+  · {{ alert.status }}
+  · type {{ alert.alert_type }}
+  · score {{ alert.risk_score if alert.risk_score is not none else '—' }}</p>
+<div class="card">
+  <h2 class="h5">Why this was flagged</h2>
+  <p>{{ alert.reason }}</p>
+  <p class="small text-muted mb-0">This is a review priority based on check-in records. It is not a medical diagnosis and not confirmation of an emergency.</p>
+</div>
+<p>
+  Person: <a href="{{ url_for('elderly.profile', elderly_id=alert.elderly_id) }}">{{ alert.elderly.full_name }}</a>
+  · Emergency: {{ alert.elderly.emergency_contact_name }} {{ alert.elderly.emergency_contact_phone }}
+</p>
+
+{% if alert.status in ['open', 'escalated', 'acknowledged'] %}
+<div class="card">
+  <h2 class="h5">Acknowledge</h2>
+  <form method="post" action="{{ url_for('alerts.acknowledge', alert_id=alert.id) }}">
+    {{ ack_form.hidden_tag() }}
+    <div class="mb-2">{{ ack_form.notes(class="form-control", rows="2", placeholder="Optional note") }}</div>
+    <button class="btn btn-outline-secondary">Acknowledge</button>
+  </form>
+</div>
+<div class="card">
+  <h2 class="h5">Record follow-up</h2>
+  <form method="post" action="{{ url_for('alerts.followup', alert_id=alert.id) }}">
+    {{ fu_form.hidden_tag() }}
+    <div class="row">
+      <div class="col-md-4 mb-2"><label class="form-label">Action</label>{{ fu_form.action_type(class="form-select") }}</div>
+      <div class="col-md-4 mb-2"><label class="form-label">Outcome</label>{{ fu_form.outcome(class="form-select") }}</div>
+    </div>
+    <div class="mb-2"><label class="form-label">What was done?</label>{{ fu_form.description(class="form-control", rows="3") }}</div>
+    <button class="btn btn-teal text-white">Save follow-up</button>
+  </form>
+</div>
+<div class="card">
+  <h2 class="h5">Close case</h2>
+  <p>A case closes only after a follow-up is documented.</p>
+  <form method="post" action="{{ url_for('alerts.close', alert_id=alert.id) }}" class="d-inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-success">Close case</button>
+  </form>
+  <form method="post" action="{{ url_for('alerts.close', alert_id=alert.id) }}" class="d-inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="as_false" value="1">
+    <button class="btn btn-outline-warning">Mark false alert</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="card">
+  <h2 class="h5">Follow-ups</h2>
+  {% for f in followups %}
+    <p><strong>{{ f.performed_at.strftime('%Y-%m-%d %H:%M') }}</strong> · {{ f.action_type }} · {{ f.outcome }}<br>{{ f.description }}</p>
+  {% else %}<p class="text-muted">None yet.</p>{% endfor %}
+  <h2 class="h5">Acknowledgements</h2>
+  {% for a in acks %}
+    <p class="mb-1">{{ a.acknowledged_at.strftime('%Y-%m-%d %H:%M') }} · {{ a.user.full_name }} · {{ a.notes or '' }}</p>
+  {% else %}<p class="text-muted mb-0">Not yet acknowledged.</p>{% endfor %}
+</div>
+{% endblock %}

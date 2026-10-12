@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h1 class="h3">Reports</h1>
+<form class="card row g-2 align-items-end" method="get">
+  <div class="col-auto"><label class="form-label">From</label>{{ form.start(class="form-control") }}</div>
+  <div class="col-auto"><label class="form-label">To</label>{{ form.end(class="form-control") }}</div>
+  <div class="col-auto"><button class="btn btn-teal text-white">Filter</button></div>
+</form>
+<div class="row">
+  <div class="col-lg-7"><div class="card"><h2 class="h5">Check-ins in period</h2><canvas id="checkinChart" height="140"></canvas></div></div>
+  <div class="col-lg-5"><div class="card"><h2 class="h5">Alert priorities</h2><canvas id="prioChart" height="140"></canvas></div></div>
+</div>
+<div class="card">
+  <h2 class="h5">Check-in records ({{ checkins|length }})</h2>
+  <div class="table-responsive" style="max-height:280px;overflow:auto;">
+    <table class="table table-sm"><thead><tr><th>Due</th><th>Person</th><th>Status</th><th>Mood</th></tr></thead>
+    <tbody>
+    {% for r in checkins %}
+      <tr><td>{{ r.due_at.strftime('%Y-%m-%d') }}</td><td>{{ r.elderly.full_name }}</td><td>{{ r.status }}</td><td>{{ r.mood or '—' }}</td></tr>
+    {% endfor %}
+    </tbody></table>
+  </div>
+</div>
+<div class="card">
+  <h2 class="h5">Alerts ({{ alerts|length }})</h2>
+  <ul>
+    {% for a in alerts %}<li>{{ a.created_at.strftime('%Y-%m-%d') }} · {{ a.elderly.full_name }} · {{ a.priority }} · {{ a.status }}</li>
+    {% else %}<li>None in this period.</li>{% endfor %}
+  </ul>
+</div>
+<div class="card">
+  <h2 class="h5">Visits ({{ visits|length }})</h2>
+  <ul>
+    {% for v in visits %}<li>{{ v.visited_at.strftime('%Y-%m-%d') }} · {{ v.elderly.full_name }} · {{ v.visit_type }}</li>
+    {% else %}<li>None in this period.</li>{% endfor %}
+  </ul>
+</div>
+<div class="card">
+  <h2 class="h5">Follow-up outcomes ({{ followups|length }})</h2>
+  <ul>
+    {% for k, n in outcome_counts.items() %}<li>{{ k }}: {{ n }}</li>{% else %}<li>None in this period.</li>{% endfor %}
+  </ul>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const labels = {{ labels|tojson }};
+new Chart(document.getElementById('checkinChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      { label: 'Completed', data: {{ completed_series|tojson }}, backgroundColor: '#3e7a55' },
+      { label: 'Missed', data: {{ missed_series|tojson }}, backgroundColor: '#b54a3c' }
+    ]
+  },
+  options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+});
+new Chart(document.getElementById('prioChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Low', 'Medium', 'High', 'Critical'],
+    datasets: [{ data: [{{ priority_counts.low }}, {{ priority_counts.medium }}, {{ priority_counts.high }}, {{ priority_counts.critical }}],
+      backgroundColor: ['#c5cec8', '#b5811a', '#b54a3c', '#7a2c24'] }]
+  },
+  options: { plugins: { legend: { position: 'bottom' } } }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge, priority_badge %}
+{% block title %}{{ profile.full_name }}{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap gap-2 mb-3">
+  <div>
+    <h1 class="h3 mb-1">{{ profile.full_name }}</h1>
+    {{ status_badge(status) }}
+    {% if not profile.consent_given %}<span class="badge text-bg-warning">No consent</span>{% endif %}
+  </div>
+  <div>
+    {% if current_user.role in ['admin','caregiver','elderly','family'] %}
+      <a class="btn btn-teal text-white" href="{{ url_for('checkins.submit', elderly_id=profile.id) }}">Record check-in</a>
+    {% endif %}
+    {% if current_user.role == 'admin' %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('elderly.edit', elderly_id=profile.id) }}">Edit</a>
+    {% endif %}
+  </div>
+</div>
+<div class="row">
+  <div class="col-lg-7">
+    <div class="card">
+      <h2 class="h5">Contact</h2>
+      <p class="mb-1">{{ profile.address or '—' }}</p>
+      <p class="mb-1">Phone: {{ profile.phone or '—' }}</p>
+      <p class="mb-1">Living: {{ profile.living_arrangement }} · Mobility: {{ profile.mobility_status }}</p>
+      <p class="mb-0">Emergency: {{ profile.emergency_contact_name or '—' }}
+        ({{ profile.emergency_contact_relationship or '—' }}) {{ profile.emergency_contact_phone or '' }}</p>
+      <p class="small text-muted mt-2 mb-0">Secondary: {{ profile.secondary_contact_name or '—' }} {{ profile.secondary_contact_phone or '' }}</p>
+    </div>
+    <div class="card">
+      <h2 class="h5">Welfare notes</h2>
+      <p class="mb-0">{{ profile.welfare_notes or 'None recorded.' }}</p>
+    </div>
+    <div class="card">
+      <h2 class="h5">Recent check-ins</h2>
+      <ul class="mb-2">
+        {% for r in recent %}
+          <li>{{ r.due_at.strftime('%Y-%m-%d %H:%M') }} · {{ r.status }} · {{ r.mood or '—' }}</li>
+        {% else %}
+          <li>No records yet.</li>
+        {% endfor %}
+      </ul>
+      <a href="{{ url_for('elderly.history', elderly_id=profile.id) }}">Full history</a>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card">
+      <h2 class="h5">Review priority (rules)</h2>
+      <p>{{ priority_badge(assessment.priority) }} score {{ assessment.score }}/100</p>
+      <ul class="reason-list">
+        {% for r in assessment.reasons %}<li>{{ r }}</li>{% endfor %}
+      </ul>
+      <p class="small text-muted mb-0">This ranking supports human review. It is not a diagnosis or confirmed emergency.</p>
+    </div>
+    <div class="card">
+      <h2 class="h5">Schedule</h2>
+      {% if schedule %}
+        <p>{{ schedule.frequency }} · {{ schedule.window_start.strftime('%H:%M') }}–{{ schedule.window_end.strftime('%H:%M') }}
+          · grace {{ schedule.grace_minutes }} min</p>
+      {% else %}
+        <p>No active schedule.</p>
+      {% endif %}
+      {% if current_user.role in ['admin','caregiver'] %}
+        <a href="{{ url_for('elderly.schedule', elderly_id=profile.id) }}">Edit schedule</a>
+      {% endif %}
+    </div>
+    <div class="card">
+      <h2 class="h5">Caregivers</h2>
+      {% for a in assignments %}
+        <p class="mb-1">{{ a.caregiver.full_name }} {% if a.is_primary %}(primary){% endif %} {% if not a.is_active %}· inactive{% endif %}</p>
+      {% else %}<p>None assigned.</p>{% endfor %}
+      {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('elderly.assign', elderly_id=profile.id) }}">Assign caregiver</a>
+        · <a href="{{ url_for('elderly.family', elderly_id=profile.id) }}">Link family</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

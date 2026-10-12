@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h1 class="h3 mb-0">Notifications</h1>
+  <form method="post" action="{{ url_for('main.read_all_notifications') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-outline-secondary btn-sm">Mark all read</button>
+  </form>
+</div>
+<div class="card">
+  {% for n in items %}
+    <div class="border-bottom py-2 {% if not n.is_read %}fw-semibold{% endif %}">
+      <div>{{ n.title }} <span class="text-muted small">{{ n.created_at.strftime('%Y-%m-%d %H:%M') }}</span></div>
+      <div>{{ n.message }}</div>
+      {% if n.link %}<a href="{{ n.link }}">Open</a>{% endif %}
+    </div>
+  {% else %}
+    <p class="mb-0">No notifications.</p>
+  {% endfor %}
+</div>
+{% endblock %}
