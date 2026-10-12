@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Schedule{% endblock %}
+{% block content %}
+<h1 class="h3">Check-in schedule — {{ profile.full_name }}</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Frequency</label>{{ form.frequency(class="form-select") }}</div>
+  <div class="row">
+    <div class="col-md-4 mb-3"><label class="form-label">Window start</label>{{ form.window_start(class="form-control") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Window end</label>{{ form.window_end(class="form-control") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Grace minutes</label>{{ form.grace_minutes(class="form-control") }}</div>
+  </div>
+  <div class="mb-3"><label class="form-label">Days</label>{{ form.days(class="form-select", size="7") }}</div>
+  <div class="form-check mb-3">{{ form.is_active(class="form-check-input", id="is_active") }} <label class="form-check-label" for="is_active">Schedule is active</label></div>
+  <button class="btn btn-teal text-white">Save schedule</button>
+</form>
+{% endblock %}

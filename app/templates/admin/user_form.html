@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="h3">{{ title }}</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Full name</label>{{ form.full_name(class="form-control") }}</div>
+  <div class="mb-3"><label class="form-label">Username</label>{{ form.username(class="form-control") }}</div>
+  <div class="mb-3"><label class="form-label">Email</label>{{ form.email(class="form-control") }}</div>
+  <div class="mb-3"><label class="form-label">Phone</label>{{ form.phone(class="form-control") }}</div>
+  <div class="mb-3"><label class="form-label">Role</label>{{ form.role(class="form-select") }}</div>
+  <div class="mb-3"><label class="form-label">Password</label>{{ form.password(class="form-control") }}</div>
+  <div class="form-check mb-3">{{ form.is_active(class="form-check-input", id="is_active") }} <label class="form-check-label" for="is_active">Account is active</label></div>
+  <button class="btn btn-teal text-white">Save</button>
+</form>
+{% endblock %}

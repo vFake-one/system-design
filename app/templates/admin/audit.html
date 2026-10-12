@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Audit log{% endblock %}
+{% block content %}
+<h1 class="h3">Audit log</h1>
+<div class="card">
+  <table class="table table-sm">
+    <thead><tr><th>When</th><th>User</th><th>Action</th><th>Entity</th><th>Details</th><th>IP</th></tr></thead>
+    <tbody>
+    {% for row in logs.items %}
+      <tr>
+        <td>{{ row.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+        <td>{{ row.user.username if row.user else '—' }}</td>
+        <td>{{ row.action }}</td>
+        <td>{{ row.entity_type }} {{ row.entity_id or '' }}</td>
+        <td>{{ row.details or '' }}</td>
+        <td>{{ row.ip_address or '' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <nav>
+    {% if logs.has_prev %}<a href="?page={{ logs.prev_num }}">Previous</a>{% endif %}
+    Page {{ logs.page }} of {{ logs.pages }}
+    {% if logs.has_next %}<a href="?page={{ logs.next_num }}">Next</a>{% endif %}
+  </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Assign caregiver{% endblock %}
+{% block content %}
+<h1 class="h3">Assign caregiver — {{ profile.full_name }}</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Caregiver</label>{{ form.caregiver_id(class="form-select") }}</div>
+  <div class="form-check mb-3">{{ form.is_primary(class="form-check-input", id="is_primary") }} <label class="form-check-label" for="is_primary">{{ form.is_primary.label.text }}</label></div>
+  <div class="mb-3"><label class="form-label">Notes</label>{{ form.notes(class="form-control") }}</div>
+  <button class="btn btn-teal text-white">Save assignment</button>
+</form>
+<div class="card">
+  <h2 class="h5">Current assignments</h2>
+  {% for a in assignments %}
+    <form method="post" action="{{ url_for('elderly.deactivate_assignment', elderly_id=profile.id, assignment_id=a.id) }}" class="d-flex justify-content-between align-items-center border-bottom py-2">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div>{{ a.caregiver.full_name }} {% if a.is_primary %}· primary{% endif %} {% if not a.is_active %}· inactive{% endif %}</div>
+      {% if a.is_active %}<button class="btn btn-sm btn-outline-danger">Deactivate</button>{% endif %}
+    </form>
+  {% endfor %}
+</div>
+{% endblock %}

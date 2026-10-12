@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Experimental ML comparison{% endblock %}
+{% block content %}
+<div class="alert alert-warning">
+  <strong>{{ result.synthetic_label }}</strong>
+  The Isolation Forest is not used to raise live alerts. Do not quote these figures as real-world accuracy.
+</div>
+<h1 class="h3">Experimental comparison</h1>
+<div class="card">
+  <ul>
+    <li>Synthetic rows: {{ result.n_rows }}</li>
+    <li>Rule engine labelled high/critical: {{ result.rule_high_or_critical }}</li>
+    <li>Isolation Forest labelled unusual: {{ result.forest_unusual }}</li>
+    <li>Agreement (rules vs forest): {{ result.agreement_rule_vs_forest }}</li>
+    <li>Agreement (forest vs planted unusual cluster): {{ result.agreement_forest_vs_planted_unusual }}</li>
+    <li>Agreement (rules vs planted unusual cluster): {{ result.agreement_rule_vs_planted_unusual }}</li>
+  </ul>
+  <p>{{ result.note }}</p>
+  <p>The live system uses the documented rule engine on the Alerts and Profile pages.</p>
+</div>
+{% endblock %}

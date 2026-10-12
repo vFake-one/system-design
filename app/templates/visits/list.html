@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Visits{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+  <h1 class="h3 mb-0">Visits</h1>
+  <a class="btn btn-teal text-white" href="{{ url_for('visits.create') }}">Record visit</a>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>When</th><th>Household</th><th>Caregiver</th><th>Type</th><th>Minutes</th><th>Observations</th></tr></thead>
+      <tbody>
+      {% for v in visits %}
+        <tr>
+          <td>{{ v.visited_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ v.elderly.full_name }}</td>
+          <td>{{ v.caregiver.full_name }}</td>
+          <td>{{ v.visit_type }}</td>
+          <td>{{ v.duration_minutes or '—' }}</td>
+          <td>{{ v.observations or '' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No visits.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

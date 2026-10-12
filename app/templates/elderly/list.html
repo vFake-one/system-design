@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}Households{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="h3 mb-0">Households</h1>
+  {% if current_user.role == 'admin' %}
+    <a class="btn btn-teal text-white" href="{{ url_for('elderly.create') }}">Add household</a>
+  {% endif %}
+</div>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-auto"><input class="form-control" name="q" value="{{ q }}" placeholder="Search name"></div>
+  <div class="col-auto"><button class="btn btn-outline-secondary">Search</button></div>
+</form>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Name</th><th>Phone</th><th>Living</th><th>Consent</th><th>Status</th><th></th></tr></thead>
+      <tbody>
+      {% for p, st in rows %}
+        <tr>
+          <td>{{ p.full_name }}</td>
+          <td>{{ p.phone or '—' }}</td>
+          <td>{{ p.living_arrangement or '—' }}</td>
+          <td>{{ 'Yes' if p.consent_given else 'No' }}</td>
+          <td>{{ status_badge(st) }}</td>
+          <td><a href="{{ url_for('elderly.profile', elderly_id=p.id) }}">Open</a></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No records.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

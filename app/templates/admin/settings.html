@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Settings{% endblock %}
+{% block content %}
+<h1 class="h3">Settings</h1>
+<form method="post" class="card">
+  {{ form.hidden_tag() }}
+  <div class="mb-3"><label class="form-label">Organisation name</label>{{ form.organisation_name(class="form-control") }}</div>
+  <div class="mb-3"><label class="form-label">Escalate unacknowledged alerts after (hours)</label>{{ form.escalation_hours(class="form-control") }}</div>
+  <button class="btn btn-teal text-white">Save settings</button>
+</form>
+<div class="card">
+  <h2 class="h5">Operations</h2>
+  <form method="post" action="{{ url_for('admin.scan_now') }}" class="d-inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn btn-outline-secondary">Run missed-check scan now</button>
+  </form>
+  <a class="btn btn-outline-secondary" href="{{ url_for('admin.backup') }}">Download SQLite backup</a>
+  <a class="btn btn-outline-secondary" href="{{ url_for('admin.ml_demo') }}">Experimental ML comparison</a>
+</div>
+{% endblock %}

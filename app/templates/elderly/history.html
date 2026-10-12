@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<h1 class="h3">Check-in history — {{ profile.full_name }}</h1>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table">
+      <thead><tr><th>Due</th><th>Submitted</th><th>Status</th><th>Mood</th><th>Method</th><th>Notes</th></tr></thead>
+      <tbody>
+      {% for r in records %}
+        <tr>
+          <td>{{ r.due_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          <td>{{ r.submitted_at.strftime('%Y-%m-%d %H:%M') if r.submitted_at else '—' }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.mood or '—' }}</td>
+          <td>{{ r.method or '—' }}</td>
+          <td>{{ r.notes or '' }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6">No history.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% macro status_badge(status) %}
+  {% set labels = {
+    'checkin_received': 'Check-in received',
+    'awaiting': 'Awaiting check-in',
+    'overdue': 'Overdue',
+    'follow_up': 'Follow-up needed',
+    'no_schedule': 'No schedule'
+  } %}
+  <span class="badge-status st-{{ status }}">{{ labels.get(status, status) }}</span>
+{% endmacro %}
+
+{% macro priority_badge(priority) %}
+  <span class="badge-status prio-{{ priority }}">{{ priority|capitalize }} priority</span>
+{% endmacro %}

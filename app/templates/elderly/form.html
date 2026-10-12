@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<h1 class="h3">{{ title }}</h1>
+<form method="post" class="card" novalidate>
+  {{ form.hidden_tag() }}
+  <div class="row">
+    <div class="col-md-6 mb-3"><label class="form-label" for="full_name">Full name</label>{{ form.full_name(class="form-control", id="full_name") }}</div>
+    <div class="col-md-3 mb-3"><label class="form-label" for="date_of_birth">Date of birth</label>{{ form.date_of_birth(class="form-control", id="date_of_birth") }}</div>
+    <div class="col-md-3 mb-3"><label class="form-label" for="gender">Gender</label>{{ form.gender(class="form-select", id="gender") }}</div>
+    <div class="col-md-8 mb-3"><label class="form-label" for="address">Address</label>{{ form.address(class="form-control", id="address") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label" for="phone">Phone</label>{{ form.phone(class="form-control", id="phone") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label" for="mobility_status">Mobility</label>{{ form.mobility_status(class="form-select", id="mobility_status") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label" for="living_arrangement">Living arrangement</label>{{ form.living_arrangement(class="form-select", id="living_arrangement") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label" for="status">Record status</label>{{ form.status(class="form-select", id="status") }}</div>
+  </div>
+  <h2 class="h5">Emergency contacts</h2>
+  <div class="row">
+    <div class="col-md-4 mb-3"><label class="form-label">Name</label>{{ form.emergency_contact_name(class="form-control") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Phone</label>{{ form.emergency_contact_phone(class="form-control") }}</div>
+    <div class="col-md-4 mb-3"><label class="form-label">Relationship</label>{{ form.emergency_contact_relationship(class="form-control") }}</div>
+    <div class="col-md-6 mb-3"><label class="form-label">Secondary name</label>{{ form.secondary_contact_name(class="form-control") }}</div>
+    <div class="col-md-6 mb-3"><label class="form-label">Secondary phone</label>{{ form.secondary_contact_phone(class="form-control") }}</div>
+  </div>
+  <div class="mb-3"><label class="form-label">Welfare notes (sensitive)</label>{{ form.welfare_notes(class="form-control", rows=3) }}</div>
+  <div class="mb-3"><label class="form-label">Linked login username (optional)</label>{{ form.login_username(class="form-control") }}</div>
+  <div class="form-check mb-3">
+    {{ form.consent_given(class="form-check-input", id="consent_given") }}
+    <label class="form-check-label" for="consent_given">{{ form.consent_given.label.text }}</label>
+  </div>
+  <p class="small text-muted">Without consent the record is stored as inactive and will not be scheduled.</p>
+  <button class="btn btn-teal text-white" type="submit">Save</button>
+  <a class="btn btn-link" href="{{ url_for('elderly.list_households') }}">Cancel</a>
+</form>
+{% endblock %}

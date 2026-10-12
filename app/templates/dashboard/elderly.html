@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_badge %}
+{% block title %}Today’s check-in{% endblock %}
+{% block body_class %}mode-elderly{% endblock %}
+{% block content %}
+<div class="elderly-home">
+  <h1 class="h2">Hello, {{ current_user.full_name.split(' ')[0] }}</h1>
+  {% for card in cards %}
+    <div class="card">
+      <h2 class="h4">{{ card.profile.full_name }}</h2>
+      <p>{{ status_badge(card.status) }}</p>
+      {% if card.schedule %}
+        <p>Today’s window: <strong>{{ card.schedule.window_start.strftime('%H:%M') }} – {{ card.schedule.window_end.strftime('%H:%M') }}</strong>
+          (grace {{ card.schedule.grace_minutes }} min)</p>
+      {% else %}
+        <p>No active schedule is set. You can still send a check-in.</p>
+      {% endif %}
+      {% if card.record and card.record.status in ['completed', 'completed_late'] %}
+        <p>A check-in was already received today at {{ card.record.submitted_at.strftime('%H:%M') if card.record.submitted_at else '—' }}.</p>
+      {% endif %}
+      <a class="btn btn-teal text-white btn-xl mb-2" href="{{ url_for('checkins.submit', elderly_id=card.profile.id) }}">Open today’s check-in</a>
+      <a class="btn btn-outline-secondary w-100" href="{{ url_for('elderly.history', elderly_id=card.profile.id) }}">View history</a>
+    </div>
+  {% else %}
+    <div class="card">
+      <p>No household is linked to this account yet. Ask an administrator to link you.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
